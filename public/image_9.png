@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<Error>
+	<Code>InvalidRequest</Code>
+	<Message>Missing required header for this request: Appid, Bucket format should be &lt;bucketname&gt;-&lt;appid&gt;</Message>
+	<Resource>/cdn/微信图片_2025-08-18_135438_400.png</Resource>
+	<RequestId>NjhhNDJhNzNfNGQwZTNlMGJfMTMyZDJfODZmMw==</RequestId>
+	<TraceId>OGVmYzZiMmQzYjA2OWNhODk0NTRkMTBiOWVmMDAxODczNTBmNjMwZmQ0MTZkMjg0NjlkNTYyNmY4ZTRkZTk0N2Q0NDUxY2QyYWIxMWQ1YjEzMTQwYTJlMGNkZjg1N2U3OTVkYjQ0MmM4YjZlNTY5NzE0NjI2MzdjMWRiYzkxMzE=</TraceId>
+</Error>
+
