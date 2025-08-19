@@ -121,7 +121,7 @@ export default function Home() {
     { title: "TECHNOLOGY", imgSrc: "/image_4.png" },
     { title: "EDUCATION", imgSrc: "/image_5.png" },
     { title: "MEDIA COLLECTION", imgSrc: "/image_6.png" },
-    { title: "NEW ENERGY", imgSrc: "/image_9.png" },
+    { title: "NEW ENERGY", imgSrc: "/image_1.png" },
     { title: "AGRICULTURE", imgSrc: "/image_8.png" },
   ];
   const qrcodes = [
