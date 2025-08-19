@@ -1,4 +1,42 @@
+"use client";
+
 import Image from "next/image";
+import { useState, useRef, useEffect } from 'react';
+
+// Helper component to trigger animations on scroll
+const AnimateOnScroll = ({ children, animationClass, delay, threshold = 0.1 }: { children: React.ReactNode; animationClass: string; delay?: string; threshold?: number }) => {
+  const [inView, setInView] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+      },
+      { threshold }
+    );
+
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [ref, threshold]);
+
+  // When out of view, element is transparent. When in view, the animation class is added.
+  // The animation keyframes handle the transition from opacity 0 to 1.
+  return (
+    <div ref={ref} className={inView ? `${animationClass} ${delay || ''}` : 'opacity-0'}>
+      {children}
+    </div>
+  );
+};
+
 
 // Helper component for stats
 const StatCard = ({ value, label }: { value: string; label: string }) => (
@@ -18,8 +56,61 @@ const IndustryCard = ({ imgSrc, title }: { imgSrc: string; title: string }) => (
   </div>
 );
 
+const ScrollIndicator = () => (
+  <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
+    <div className="animate-bounce bg-white/20 p-2 w-10 h-10 ring-1 ring-slate-900/5 dark:ring-slate-200/20 shadow-lg rounded-full flex items-center justify-center">
+      <svg className="w-6 h-6 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+        <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+      </svg>
+    </div>
+  </div>
+);
+
 export default function Home() {
-  const navLinks = ["集团首页", "集团概况", "集团产业", "集团新闻", "人才招聘", "集团党建", "联系我们"];
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Check if the user has scrolled to the bottom of the page
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10;
+      setIsAtBottom(atBottom);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Check on mount as well in case the page isn't scrollable initially
+    handleScroll(); 
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = [
+    { title: "集团首页", href: "#" },
+    {
+      title: "集团概况",
+      href: "#",
+      submenu: [
+        { title: "集团介绍", href: "#" },
+        { title: "荣誉资质", href: "#" },
+        { title: "组织架构", href: "#" },
+        { title: "发展历程", href: "#" },
+      ]
+    },
+    {
+      title: "集团产业",
+      href: "#",
+      submenu: [
+        { title: "蚂蚁云科", href: "#" },
+        { title: "叁才教育", href: "#" },
+        { title: "叁才农业", href: "#" },
+        { title: "叁才融媒", href: "#" },
+        { title: "星链智运", href: "#" },
+      ]
+    },
+    { title: "集团新闻", href: "#" },
+    { title: "人才招聘", href: "#" },
+    { title: "集团党建", href: "#" },
+    { title: "联系我们", href: "#" },
+  ];
   const stats = [
     { value: "10+", label: "软件著作权" },
     { value: "10+", label: "发明专利" },
@@ -47,95 +138,133 @@ export default function Home() {
           <div className="text-2xl font-bold text-cyan-400">
             <Image src="/image_1.png" alt="Logo" width={150} height={40} />
           </div>
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex space-x-8 items-center">
             {navLinks.map(link => (
-              <a key={link} href="#" className="hover:text-cyan-400 transition-colors duration-300">{link}</a>
+              <div key={link.title} className="relative group">
+                <a href={link.href} className="hover:text-cyan-400 transition-colors duration-300 flex items-center">
+                  {link.title}
+                  {link.submenu && (
+                    <svg className="w-4 h-4 ml-1 transform group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  )}
+                </a>
+                {link.submenu && (
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-gray-800 bg-opacity-80 backdrop-blur-lg rounded-md shadow-lg py-2 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                    {link.submenu.map(sublink => (
+                      <a key={sublink.title} href={sublink.href} className="block px-4 py-2 text-sm text-gray-300 hover:bg-cyan-500 hover:text-white transition-colors duration-200">{sublink.title}</a>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </nav>
       </header>
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center">
-        <Image src="/image_3.png" alt="Company Building" layout="fill" objectFit="cover" className="opacity-40" />
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        <Image src="/image_3.png" alt="Company Building" layout="fill" objectFit="cover" className="opacity-40 animate-zoom-in" />
         <div className="relative z-10 text-center">
           <h1 className="text-5xl md:text-7xl font-extrabold mb-4 animate-fade-in-down">叁才通成科技集团</h1>
-          <p className="text-xl md:text-2xl text-gray-300 animate-fade-in-up">SAN CAI TONG CHENG KE JI JI TUAN</p>
+          <p className="text-xl md:text-2xl text-gray-300 animate-fade-in-up delay-500">SAN CAI TONG CHENG KE JI JI TUAN</p>
         </div>
       </section>
 
       {/* About Section */}
       <section className="py-20 container mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="animate-fade-in-right">
-            <h2 className="text-4xl font-bold mb-6 text-cyan-400">集团介绍</h2>
-            <p className="text-gray-300 leading-relaxed mb-4">
-              自2022年8月荣耀启航，是由多位跨界实战型企业家共同铸就的智慧结晶。集团以深邃的前瞻性国际视野为舵，精准布局城市核心战略，致力于在内容分发网络服务、教育创新、现代农业、新能源科技等前沿领域深耕細作，引领行业变革，共绘未来蓝图。
-            </p>
-            <p className="text-gray-300 leading-relaxed">
-              集团汇聚八方英才，整合全球优势资源，构建起一个集技术创新、产业融合、市场拓展于一体的强大生态系统，引领全国乃至全球数字化经济浪潮，开启新纪元的辉煌篇章。
-            </p>
+        <AnimateOnScroll animationClass="animate-slide-in-up">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-4xl font-bold mb-6 text-cyan-400">集团介绍</h2>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                自2022年8月荣耀启航，是由多位跨界实战型企业家共同铸就的智慧结晶。集团以深邃的前瞻性国际视野为舵，精准布局城市核心战略，致力于在内容分发网络服务、教育创新、现代农业、新能源科技等前沿领域深耕細作，引领行业变革，共绘未来蓝图。
+              </p>
+              <p className="text-gray-300 leading-relaxed">
+                集团汇聚八方英才，整合全球优势资源，构建起一个集技术创新、产业融合、市场拓展于一体的强大生态系统，引领全国乃至全球数字化经济浪潮，开启新纪元的辉煌篇章。
+              </p>
+            </div>
+            <div>
+              <Image src="/image_2.png" alt="About us" width={600} height={400} className="rounded-lg shadow-2xl" />
+            </div>
           </div>
-          <div className="animate-fade-in-left">
-            <Image src="/image_2.png" alt="About us" width={600} height={400} className="rounded-lg shadow-2xl" />
-          </div>
-        </div>
+        </AnimateOnScroll>
       </section>
       
       {/* Stats Section */}
       <section className="py-20 bg-black bg-opacity-20">
         <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-12 text-cyan-400">Group Honor</h2>
+          <AnimateOnScroll animationClass="animate-fade-in-down">
+            <h2 className="text-4xl font-bold text-center mb-12 text-cyan-400">Group Honor</h2>
+          </AnimateOnScroll>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map(stat => <StatCard key={stat.label} {...stat} />)}
+            {stats.map((stat, index) => (
+              <AnimateOnScroll key={stat.label} animationClass="animate-zoom-in" delay={`delay-${(index + 1) * 100}`}>
+                <StatCard {...stat} />
+              </AnimateOnScroll>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Industries Section */}
       <section className="py-20 container mx-auto px-6">
-        <h2 className="text-4xl font-bold text-center mb-12 text-cyan-400">集团产业</h2>
+        <AnimateOnScroll animationClass="animate-fade-in-down">
+          <h2 className="text-4xl font-bold text-center mb-12 text-cyan-400">集团产业</h2>
+        </AnimateOnScroll>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
-          {industries.map(industry => <IndustryCard key={industry.title} {...industry} />)}
+          {industries.map((industry, index) => (
+            <AnimateOnScroll key={industry.title} animationClass="animate-slide-in-up" delay={`delay-${(index + 1) * 100}`}>
+              <IndustryCard {...industry} />
+            </AnimateOnScroll>
+          ))}
         </div>
       </section>
 
       {/* News Section */}
       <section className="py-20 bg-black bg-opacity-20">
         <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-12 text-cyan-400">新闻资讯</h2>
-          <div className="max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-xl overflow-hidden md:flex">
-            <div className="md:w-1/2">
-              <Image src="/image_7.png" alt="News" width={600} height={400} className="object-cover w-full h-full" />
+          <AnimateOnScroll animationClass="animate-fade-in-down">
+            <h2 className="text-4xl font-bold text-center mb-12 text-cyan-400">新闻资讯</h2>
+          </AnimateOnScroll>
+          <AnimateOnScroll animationClass="animate-zoom-in">
+            <div className="max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-xl overflow-hidden md:flex transition-all duration-300 hover:shadow-cyan-500/50 hover:shadow-2xl">
+              <div className="md:w-1/2">
+                <Image src="/image_7.png" alt="News" width={600} height={400} className="object-cover w-full h-full" />
+              </div>
+              <div className="p-8 md:w-1/2 flex flex-col justify-center">
+                <h3 className="text-2xl font-bold mb-4">『星链智运』新能源重卡项目评审会在成都召开</h3>
+                <p className="text-gray-400 mb-6">叁才通成科技将启绿色矿运新征程</p>
+                <a href="#" className="text-cyan-400 hover:underline self-start">了解更多 →</a>
+              </div>
             </div>
-            <div className="p-8 md:w-1/2 flex flex-col justify-center">
-              <h3 className="text-2xl font-bold mb-4">『星链智运』新能源重卡项目评审会在成都召开</h3>
-              <p className="text-gray-400 mb-6">叁才通成科技将启绿色矿运新征程</p>
-              <a href="#" className="text-cyan-400 hover:underline self-start">了解更多 →</a>
-            </div>
-          </div>
+          </AnimateOnScroll>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="bg-gray-950 py-12">
-        <div className="container mx-auto px-6 text-center text-gray-400">
-          <h2 className="text-3xl font-bold mb-8 text-cyan-400">联系我们</h2>
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            {qrcodes.map(qr => (
-              <div key={qr.title} className="flex flex-col items-center">
-                <Image src={qr.imgSrc} alt={qr.title} width={150} height={150} className="rounded-lg mb-4" />
-                <p>{qr.title}</p>
-              </div>
-            ))}
+        <AnimateOnScroll animationClass="animate-slide-in-up">
+          <div className="container mx-auto px-6 text-center text-gray-400">
+            <h2 className="text-3xl font-bold mb-8 text-cyan-400">联系我们</h2>
+            <div className="grid md:grid-cols-3 gap-8 mb-8">
+              {qrcodes.map((qr, index) => (
+                <AnimateOnScroll key={qr.title} animationClass="animate-zoom-in" delay={`delay-${(index + 1) * 200}`}>
+                  <div className="flex flex-col items-center">
+                    <Image src={qr.imgSrc} alt={qr.title} width={150} height={150} className="rounded-lg mb-4" />
+                    <p>{qr.title}</p>
+                  </div>
+                </AnimateOnScroll>
+              ))}
+            </div>
+            <p className="mb-2">联系电话：400-618-0098</p>
+            <p>公司地址：成都市武侯区新园大道11号 叁才通成科技集团</p>
+            <div className="mt-8 border-t border-gray-800 pt-8">
+              <p>&copy; 2025 叁才通成科技集团. All Rights Reserved.</p>
+            </div>
           </div>
-          <p className="mb-2">联系电话：400-618-0098</p>
-          <p>公司地址：成都市武侯区新园大道11号 叁才通成科技集团</p>
-          <div className="mt-8 border-t border-gray-800 pt-8">
-            <p>&copy; 2025 叁才通成科技集团. All Rights Reserved.</p>
-          </div>
-        </div>
+        </AnimateOnScroll>
       </footer>
+
+      {!isAtBottom && <ScrollIndicator />}
     </div>
   );
 }
@@ -163,4 +292,3 @@ export default function Home() {
 .animate-fade-in-right { animation: fade-in-right 1s ease-out forwards; }
 .animate-fade-in-left { animation: fade-in-left 1s ease-out forwards; }
 */
-
