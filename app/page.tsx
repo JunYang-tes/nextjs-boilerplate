@@ -47,7 +47,7 @@ const ScrollIndicator = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); 
+    handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -127,18 +127,102 @@ const StatCard = ({ value, label }: { value: string; label: string }) => {
   );
 };
 
-const IndustrySection = ({ year, title, description, imgSrc, reverse = false }: { year: string; title: string; description: string; imgSrc: string; reverse?: boolean }) => (
+const IndustryCard = ({ year, title, description, imgSrc, reverse = false }: { year: string; title: string; description: string; imgSrc: string; reverse?: boolean }) => (
   <div className={`flex flex-col md:flex-row items-center gap-12 ${reverse ? 'md:flex-row-reverse' : ''}`}>
-    <div className="md:w-1/2">
-      <p className="text-6xl font-bold text-gray-200">{year}</p>
-      <h3 className="text-2xl font-bold mt-4">{title}</h3>
-      <p className="mt-4 text-gray-600">{description}</p>
+    <div className="md:w-1/2 relative py-8">
+      <div className="absolute -top-8 -left-4 text-[12rem] font-extrabold text-gray-100 z-0 leading-none select-none">
+        {year}
+      </div>
+      <div className="relative z-10">
+        <h3 className="text-3xl font-bold text-gray-900">{title}</h3>
+        <p className="mt-6 text-lg text-gray-700 leading-loose">{description}</p>
+      </div>
     </div>
     <div className="md:w-1/2">
-      <Image src={imgSrc} alt={title} width={500} height={350} className="rounded-lg shadow-2xl object-cover"/>
+      <Image src={imgSrc} alt={title} width={500} height={350} className="rounded-lg shadow-2xl object-cover" />
     </div>
   </div>
 );
+
+const HistoryCard = ({
+  sectionTitle,
+  sectionTitleEn,
+  more,
+  generalText, year, eventTitle, eventDescription, eventImgSrc, reverse = false }: {
+    sectionTitle: string;
+    sectionTitleEn: string;
+    more?: boolean
+    generalText: string; year: string; eventTitle: string; eventDescription: string; eventImgSrc: string; reverse?: boolean;
+  }) => (
+  <div className={`flex flex-col md:flex-row  gap-12 ${reverse ? 'md:flex-row-reverse' : ''}`}>
+    <div className="md:w-1/2 relative py-8 flex-col flex gap-2">
+      <div className="flex items-center justify-between">
+        <h2 className="text-4xl font-bold text-blue-800">{sectionTitle}</h2>
+        {more &&
+          <button className="bg-gradient-to-r from-blue-800 via-blue-700 to-blue-500 text-white px-6 py-2 rounded-full hover:shadow-lg hover:opacity-90 transition-all duration-300 text-sm">
+            点击了解更多
+          </button>}
+      </div>
+      <h2 className="text-4xl font-bold text-blue-800">{sectionTitleEn}</h2>
+
+      <p className="relative z-10 text-gray-600 leading-relaxed">{generalText}</p>
+      <div className="text-[10rem] mt-auto  font-bold text-blue-100 z-0 leading-none">{year}</div>
+    </div>
+    <div className="md:w-1/2">
+      <div className="bg-blue-50 p-8 rounded-3xl shadow-lg border border-blue-100 relative pl-12">
+        {/* Timeline line */}
+        <div className="absolute top-12 bottom-8 left-8 w-0.5 bg-blue-200"></div>
+        {/* Timeline circle */}
+        <div className="absolute top-8 left-[26px] w-4 h-4 rounded-full bg-blue-500 ring-4 ring-white"></div>
+
+        <h4 className="text-4xl font-bold text-blue-300">{year}</h4>
+        <p className="mt-4 text-gray-600">{eventDescription}</p>
+        <div className="mt-6 relative">
+          <Image src={eventImgSrc} alt={eventTitle} width={400} height={250} className="rounded-lg shadow-md object-cover w-full" />
+          <div className="absolute inset-0 bg-gradient-to-t from-blue-50 via-blue-50/50 to-transparent rounded-lg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const DetailedAxis = () => {
+  const ticks = [];
+  const numLargeTicks = 5;
+  const numSmallTicksBetween = 8;
+
+  for (let i = 0; i < numLargeTicks; i++) {
+    ticks.push({ type: 'large' });
+    if (i < numLargeTicks - 1) {
+      for (let j = 0; j < numSmallTicksBetween; j++) {
+        if (j === numSmallTicksBetween / 2 - 1) {
+          ticks.push({ type: 'medium' });
+        } else {
+          ticks.push({ type: 'small' });
+        }
+      }
+    }
+  }
+
+  return (
+    <div className="bg-blue-900 p-8 w-full">
+      <div className="relative h-24 flex items-end justify-between">
+        <div className="absolute top-[16px] left-0 w-[22%] h-20 bg-white/30  flex items-center justify-center">
+          <p className="text-white font-bold text-xl">2013参才教育</p>
+        </div>
+        <div className="absolute b-0 left-0 right-0 h-[2px] bg-white" />
+        {ticks.map((tick, index) => {
+          let height = 'h-4';
+          if (tick.type === 'large') height = 'h-8';
+          if (tick.type === 'medium') height = 'h-6';
+          return <div key={index} className={`w-0.5 ${height} bg-white`}></div>;
+        })}
+
+      </div>
+    </div>
+  );
+};
+
 
 export default function Home() {
   const navLinks = [
@@ -163,27 +247,33 @@ export default function Home() {
       year: "2013",
       title: "2013叁才教育",
       description: "整合优质教育资源，洞悉未来人才需求，采用AI大模型打造个性化教育方案，培养面向未来的复合型人才。",
-      imgSrc: "/image_5.png" 
+      imgSrc: "/sancai.webp"
     },
   ];
 
-  const honors = [
-    "高新技术企业证书",
-    "增值电信业务经营许可证",
-    "CMMI3级国际认证",
-    "专精特新企业",
-    "ISO9001质量管理体系认证",
-    "发明专利证书",
+  const honorsLeft = [
+    "国家高新技术企业称号",
+    "CMMI5 级国际权威认证",
+    "“内容分发网络管理”项目入选福建省数字经济重点工程",
+    "爱心奉献奖 “爱心企业”称号",
   ];
-  
-  const historyItems = [
-    {
-      year: "2013",
-      title: "2013叁才农业",
-      description: "整合优质教育资源，洞悉未来人才需求，采用AI大模型打造个性化教育方案，培养面向未来的复合型人才。",
-      imgSrc: "/image_8.png" 
-    },
+  const honorsRight = [
+    "软著证书",
+    "国家认证认可证书",
+    "AAA级单位证书",
+    "中国3.15诚信品牌证书",
+    "中国互联网行业30强企业证书",
   ];
+
+  const historyItem = {
+    sectionTitle: "发展历程",
+    sectionTitleEn: "DEVELOPMENT HISTORY",
+    generalText: "在时代浪潮中，叁才通成科技集团由多位跨界实战型企业家于2022年8月创立，秉持“立足当下，着眼长远”信念，凭借前瞻视野布局内容分发网络、教育创新、现代农业、新能源科技等领域。从成都起步，它快速向全国辐射，整合全球资源构建多元产业链，其发展既是企业成长史，也是与时代同频、为行业注入活力的探索之旅。让我们走进其历程，探寻成长密码与奋斗故事。",
+    year: "2013",
+    eventTitle: "整合优质教育资源",
+    eventDescription: "涵盖多类型课程，运用AI大模型打造智能学习辅导体系，助力学子与职场人士成长突破。",
+    eventImgSrc: "/sancai.webp",
+  };
 
   return (
     <div className="bg-white text-gray-800 font-sans">
@@ -235,9 +325,9 @@ export default function Home() {
         <section className="py-24 bg-gray-50">
           <div className="container mx-auto px-6 text-center">
             <AnimateOnScroll animationClass="animate-zoom-in">
-              <h2 
+              <h2
                 className="text-8xl md:text-9xl font-extrabold text-blue-500 tracking-widest"
-                style={{ 
+                style={{
                   WebkitBoxReflect: 'below -15px linear-gradient(transparent, rgba(0,0,0,0.15))',
                 }}
               >
@@ -248,65 +338,82 @@ export default function Home() {
         </section>
 
         {/* Digital Sancai Section */}
-        <section className="relative bg-fixed bg-cover bg-center" style={{ backgroundImage: "url('/building.webp')" }}>
-          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm"></div>
-          <div className="relative container mx-auto px-6 py-24">
+        <section className="relative py-24 bg-cover bg-center" style={{ backgroundImage: "url('/building.webp')" }}>
+          <div className="absolute inset-0 bg-blue-100/30"></div> {/* Light blue overlay */}
+          <div className="relative container mx-auto px-6">
             <div className="text-center mb-12">
               <AnimateOnScroll animationClass="animate-fade-in-down">
                 <h2 className="text-4xl font-bold text-blue-800">数字叁才</h2>
                 <p className="text-lg mt-2 text-blue-900">DIGITAL SANCAI</p>
               </AnimateOnScroll>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {stats.map((stat) => (
-                <StatCard key={stat.label} {...stat} />
-              ))}
+            <div className="bg-white/80 backdrop-blur-sm p-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {stats.map((stat) => (
+                  <StatCard key={stat.label} {...stat} />
+                ))}
+              </div>
             </div>
           </div>
+        </section>
+        {/* Group Industry Section */}
+        <section className="container mx-auto px-6 py-4">
+          <AnimateOnScroll animationClass="animate-slide-in-up" threshold={0.5}>
+            <HistoryCard
+              sectionTitle="集团产业"
+              more
+              sectionTitleEn="GROUP INDUSTRY"
+              year={"2023"}
+              eventTitle="2023"
+              eventDescription={`整合优质教育资源，涵盖多类型课程，运用 AI 大模型打造
+智能学习辅导体系，助力学子与职场人士成长突破。`}
+              eventImgSrc="/sancai.webp"
+              generalText="叁才通成作为行业内的卓越企业，构建了多元且极具影响力的业务版图，旗下五大业务板块各放异彩。"
+            />
+          </AnimateOnScroll>
         </section>
 
-        {/* Group Industry Section */}
-        <section className="py-24 container mx-auto px-6">
-          <AnimateOnScroll animationClass="animate-fade-in-down" threshold={0.5}>
-            <div className="text-center">
-              <h2 className="text-4xl font-bold">集团产业</h2>
-              <p className="text-lg text-gray-500 mt-2">GROUP INDUSTRY</p>
-              <div className="inline-block w-24 h-1 bg-blue-500 mt-4"></div>
-            </div>
-          </AnimateOnScroll>
-          <div className="mt-16 space-y-24">
-            {industries.map((industry, index) => (
-              <AnimateOnScroll key={index} animationClass="animate-slide-in-up" threshold={0.5}>
-                <IndustrySection {...industry} />
-              </AnimateOnScroll>
-            ))}
-          </div>
-        </section>
-        
+
+        {/* Detailed Axis Section */}
+        <DetailedAxis />
+
         {/* Corporate Honors Section */}
-        <section className="py-24 bg-gray-50">
+        <section className="py-24" style={{ background: 'linear-gradient(to right, #f0f4f8, #e6e9f0)' }}>
           <div className="container mx-auto px-6">
-            <div className="text-center">
-              <h2 className="text-4xl font-bold">企业荣誉</h2>
-              <p className="text-lg text-gray-500 mt-2">CORPORATE HONORS</p>
-              <div className="inline-block w-24 h-1 bg-blue-500 mt-4"></div>
-            </div>
-            <div className="flex flex-col md:flex-row items-center gap-12 mt-16">
-              <div className="md:w-1/3">
+            <div className="flex flex-col md:flex-row items-center gap-16">
+              {/* Left side: Image */}
+              <div className="md:w-1/2">
                 <AnimateOnScroll animationClass="animate-fade-in-right">
-                  <Image src="/honour.png" alt="Honors" width={400} height={500} className="rounded-lg shadow-2xl"/>
+                  <div className="text-gray-600 mb-4">荣誉资质 | CDN软著证书</div>
+                  <Image src="/honour.png" alt="Honors" width={500} height={400} className="rounded-lg" />
                 </AnimateOnScroll>
               </div>
-              <div className="md:w-2/3">
+              {/* Right side: Text content */}
+              <div className="md:w-1/2">
                 <AnimateOnScroll animationClass="animate-fade-in-left">
-                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-lg">
-                    {honors.map(honor => (
-                      <li key={honor} className="flex items-center">
-                        <svg className="w-5 h-5 text-blue-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path></svg>
-                        {honor}
-                      </li>
-                    ))}
-                  </ul>
+                  <h2 className="text-3xl font-bold text-blue-900">企业荣誉</h2>
+                  <p className="text-lg text-blue-900 mt-1">CORPORATE HONORS</p>
+                  <p className="mt-6 text-gray-700 leading-relaxed">
+                    在参才通成的发展历程中,众多荣誉资质见证了我们的成长与奋进。这些荣誉既是过往努力的勋章,更是推动我们持续前行,为客户、社会创造更大价值的动力。
+                  </p>
+                  <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2 text-gray-800">
+                    <ul>
+                      {honorsLeft.map((honor, index) => (
+                        <li key={index} className="flex items-start mt-3">
+                          <span className="text-blue-800 mr-3 font-bold text-lg">•</span>
+                          <span>{honor}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <ul>
+                      {honorsRight.map((honor, index) => (
+                        <li key={index} className="flex items-start mt-3">
+                          <span className="text-blue-800 mr-3 font-bold text-lg">•</span>
+                          <span>{honor}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </AnimateOnScroll>
               </div>
             </div>
@@ -315,29 +422,14 @@ export default function Home() {
 
         {/* Development History Section */}
         <section className="py-24 container mx-auto px-6">
-          <AnimateOnScroll animationClass="animate-fade-in-down" threshold={0.5}>
-            <div className="text-center">
-              <h2 className="text-4xl font-bold">发展历程</h2>
-              <p className="text-lg text-gray-500 mt-2">DEVELOPMENT HISTORY</p>
-              <div className="inline-block w-24 h-1 bg-blue-500 mt-4"></div>
-            </div>
-          </AnimateOnScroll>
-          <div className="mt-16 space-y-24">
-            {historyItems.map((item, index) => (
-              <AnimateOnScroll key={index} animationClass="animate-slide-in-up" threshold={0.5}>
-                <IndustrySection {...item} reverse={index % 2 !== 0} />
-              </AnimateOnScroll>
-            ))}
+          <div className="mt-16">
+            <AnimateOnScroll animationClass="animate-slide-in-up" threshold={0.5}>
+              <HistoryCard {...historyItem} />
+            </AnimateOnScroll>
           </div>
         </section>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-12">
-        <div className="container mx-auto px-6 text-center">
-          <p>&copy; 2025 叁才通成科技集团. All Rights Reserved.</p>
-        </div>
-      </footer>
+      <DetailedAxis />
 
       <ScrollIndicator />
     </div>
