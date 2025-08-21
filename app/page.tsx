@@ -328,10 +328,10 @@ export default function Home() {
               <h2
                 className="text-8xl md:text-9xl font-extrabold text-blue-500 tracking-widest"
                 style={{
-                  WebkitBoxReflect: 'below -15px linear-gradient(transparent, rgba(0,0,0,0.15))',
+                  WebkitBoxReflect: 'below -15px linear-gradient(transparent 40%, rgba(0,0,0,0.2))',
                 }}
               >
-                SANCAI!
+                SANCAI
               </h2>
             </AnimateOnScroll>
           </div>
