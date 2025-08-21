@@ -56,6 +56,14 @@ const IndustryCard = ({ imgSrc, title }: { imgSrc: string; title: string }) => (
   </div>
 );
 
+// Helper component for honor cards
+const HonorCard = ({ imgSrc, title }: { imgSrc: string; title: string }) => (
+    <div className="flex flex-col items-center">
+        <Image src={imgSrc} alt={title} width={200} height={280} className="rounded-lg mb-4 object-contain" />
+        <p>{title}</p>
+    </div>
+);
+
 const ScrollIndicator = () => (
   <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
     <div className="animate-bounce bg-white/20 p-2 w-10 h-10 ring-1 ring-slate-900/5 dark:ring-slate-200/20 shadow-lg rounded-full flex items-center justify-center">
@@ -124,6 +132,21 @@ export default function Home() {
     { title: "NEW ENERGY", imgSrc: "/image_1.png" },
     { title: "AGRICULTURE", imgSrc: "/image_8.png" },
   ];
+  const honors = [
+      { title: "CDN经营许可证", imgSrc: "/image_9.png" },
+      { title: "高新技术企业", imgSrc: "/image_9.png" },
+      { title: "专精特新企业", imgSrc: "/image_9.png" },
+      { title: "增值电信业务经营许可证", imgSrc: "/image_9.png" },
+      { title: "CMMI3级国际认证", imgSrc: "/image_9.png" },
+      { title: "ISO9001质量管理体系认证", imgSrc: "/image_9.png" },
+  ];
+  const history = [
+      { year: "2013", description: "公司成立，进入IDC行业，实现A轮融资，发布第一代CDN产品。" },
+      { year: "2015", description: "拓展云计算业务，与多家公有云厂商达成战略合作。" },
+      { year: "2018", description: "布局边缘计算，推出边缘计算节点及解决方案。" },
+      { year: "2021", description: "深耕教育、农业、融媒等行业，提供数字化转型方案。" },
+      { year: "2023", description: "集团成立，整合资源，开启多元化发展新篇章。" },
+  ];
   const qrcodes = [
     { title: "企业官网", imgSrc: "/image_10.png" },
     { title: "微信公众号", imgSrc: "/image_11.png" },
@@ -162,10 +185,10 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <Image src="/image_3.png" alt="Company Building" layout="fill" objectFit="cover" className="opacity-40 animate-zoom-in" />
+        <Image src="/building.webp" alt="Company Building" layout="fill" objectFit="cover" className="opacity-40 animate-zoom-in" />
         <div className="relative z-10 text-center">
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-4 animate-fade-in-down">叁才通成科技集团</h1>
-          <p className="text-xl md:text-2xl text-gray-300 animate-fade-in-up delay-500">SAN CAI TONG CHENG KE JI JI TUAN</p>
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-4 animate-fade-in-down">叁才通成</h1>
+          <p className="text-xl md:text-2xl text-gray-300 animate-fade-in-up delay-500">SANCAITONGCHENG</p>
         </div>
       </section>
 
@@ -174,7 +197,7 @@ export default function Home() {
         <AnimateOnScroll animationClass="animate-slide-in-up">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold mb-6 text-cyan-400">集团介绍</h2>
+              <h2 className="text-4xl font-bold mb-6 text-cyan-400">集团简介</h2>
               <p className="text-gray-300 leading-relaxed mb-4">
                 自2022年8月荣耀启航，是由多位跨界实战型企业家共同铸就的智慧结晶。集团以深邃的前瞻性国际视野为舵，精准布局城市核心战略，致力于在内容分发网络服务、教育创新、现代农业、新能源科技等前沿领域深耕細作，引领行业变革，共绘未来蓝图。
               </p>
@@ -183,17 +206,26 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <Image src="/image_2.png" alt="About us" width={600} height={400} className="rounded-lg shadow-2xl" />
+              <Image src="/sancai.webp" alt="About us" width={600} height={400} className="rounded-lg shadow-2xl" />
             </div>
           </div>
         </AnimateOnScroll>
       </section>
       
+      {/* SANCAI Section */}
+      <section className="py-20 bg-black bg-opacity-20">
+        <div className="container mx-auto px-6 text-center">
+          <AnimateOnScroll animationClass="animate-fade-in-down">
+            <h2 className="text-8xl font-bold text-white tracking-widest">SANCAI</h2>
+          </AnimateOnScroll>
+        </div>
+      </section>
+
       {/* Stats Section */}
       <section className="py-20 bg-black bg-opacity-20">
         <div className="container mx-auto px-6">
           <AnimateOnScroll animationClass="animate-fade-in-down">
-            <h2 className="text-4xl font-bold text-center mb-12 text-cyan-400">Group Honor</h2>
+            <h2 className="text-4xl font-bold text-center mb-12 text-cyan-400">数字叁才</h2>
           </AnimateOnScroll>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -219,24 +251,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* News Section */}
+      {/* Corporate Honors Section */}
       <section className="py-20 bg-black bg-opacity-20">
         <div className="container mx-auto px-6">
           <AnimateOnScroll animationClass="animate-fade-in-down">
-            <h2 className="text-4xl font-bold text-center mb-12 text-cyan-400">新闻资讯</h2>
+            <h2 className="text-4xl font-bold text-center mb-12 text-cyan-400">企业荣誉</h2>
           </AnimateOnScroll>
-          <AnimateOnScroll animationClass="animate-zoom-in">
-            <div className="max-w-4xl mx-auto bg-gray-800 rounded-lg shadow-xl overflow-hidden md:flex transition-all duration-300 hover:shadow-cyan-500/50 hover:shadow-2xl">
-              <div className="md:w-1/2">
-                <Image src="/image_7.png" alt="News" width={600} height={400} className="object-cover w-full h-full" />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+            {honors.map((honor, index) => (
+              <AnimateOnScroll key={honor.title} animationClass="animate-zoom-in" delay={`delay-${(index + 1) * 100}`}>
+                <HonorCard {...honor} />
+              </AnimateOnScroll>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Development History Section */}
+      <section className="py-20 container mx-auto px-6">
+        <AnimateOnScroll animationClass="animate-fade-in-down">
+          <h2 className="text-4xl font-bold text-center mb-12 text-cyan-400">发展历程</h2>
+        </AnimateOnScroll>
+        <div className="relative">
+          <div className="border-l-2 border-cyan-400 absolute h-full top-0 left-1/2 -translate-x-1/2"></div>
+          {history.map((item, index) => (
+            <div key={item.year} className={`mb-8 flex justify-between items-center w-full ${index % 2 === 0 ? 'flex-row-reverse' : ''}`}>
+              <div className="w-5/12"></div>
+              <div className="z-20 flex items-center order-1 bg-cyan-400 shadow-xl w-8 h-8 rounded-full">
+                <h1 className="mx-auto font-semibold text-lg text-white">{index + 1}</h1>
               </div>
-              <div className="p-8 md:w-1/2 flex flex-col justify-center">
-                <h3 className="text-2xl font-bold mb-4">『星链智运』新能源重卡项目评审会在成都召开</h3>
-                <p className="text-gray-400 mb-6">叁才通成科技将启绿色矿运新征程</p>
-                <a href="#" className="text-cyan-400 hover:underline self-start">了解更多 →</a>
+              <div className={`order-1 bg-gray-800 rounded-lg shadow-xl w-5/12 px-6 py-4 ${index % 2 === 0 ? 'text-right' : 'text-left'}`}>
+                <p className="text-cyan-400 text-xl font-bold">{item.year}</p>
+                <p className="text-gray-300">{item.description}</p>
               </div>
             </div>
-          </AnimateOnScroll>
+          ))}
         </div>
       </section>
 
