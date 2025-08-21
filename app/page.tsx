@@ -340,7 +340,7 @@ export default function Home() {
         {/* Digital Sancai Section */}
         <section className="relative py-24 bg-cover bg-center" style={{ backgroundImage: "url('/building.webp')" }}>
           <div className="absolute inset-0 bg-blue-100/30"></div> {/* Light blue overlay */}
-          <div className="relative container mx-auto px-6">
+          <div className="relative">
             <div className="text-center mb-12">
               <AnimateOnScroll animationClass="animate-fade-in-down">
                 <h2 className="text-4xl font-bold text-blue-800">数字叁才</h2>
